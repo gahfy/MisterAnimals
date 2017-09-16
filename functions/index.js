@@ -13,73 +13,124 @@ firebase.initializeApp(config);
 const animals = [
     {
         name : "lièvre",
-        female : "hase",
-        child : "levraut"
+        female : "hase (qui s'écrit <say-as interpret-as=\"characters\">HASE</say-as>)",
+        child : "levraut (qui s'écrit <say-as interpret-as=\"characters\">LEVRAUT</say-as>)",
+        sound : {
+            noun : "vagissement",
+            verb : "vagit"
+        }
     },
     {
         name : "cerf",
         female : "biche",
-        child : "faon"
+        child : "faon",
+        sound : {
+            noun : "brame",
+            verb : "brame"
+        }
     },
     {
         name : "canard",
         female : "cane",
-        child : "caneton"
+        child : "caneton",
+        sound : {
+            noun : "cancan",
+            verb : "cancane"
+        }
     },
     {
         name : "porc",
         female : "truie",
-        child : "porcelet"
+        child : "porcelet",
+        sound : {
+            noun : "grognement",
+            verb : "grogne"
+        }
     },
     {
         name : "cheval",
         female : "jument",
-        child : "poulain"
+        child : "poulain",
+        sound : {
+            noun : "hennissement",
+            verb : "hennit"
+        }
     },
     {
         name : "loup",
         female : "louve",
-        child : "louveteau"
+        child : "louveteau",
+        sound : {
+            noun : "hurlement",
+            verb : "hurle"
+        }
     },
     {
         name : "rat",
         female : "rate",
-        child : "raton"
+        child : "raton",
+        sound : {
+            noun : "jappement",
+            verb : "jappe"
+        }
     },
     {
         name : "singe",
         female : "guenon",
-        child : null
+        child : null,
+        sound : {
+            noun : "cri",
+            verb : "crie"
+        }
     },
     {
         name : "taureau",
         female : "vache",
-        child : "veau"
+        child : "veau",
+        sound : {
+            noun : "meuglement",
+            verb : "meugle"
+        }
     },
     {
         name : "bouc",
         female : "chèvre",
-        child : "chevreau"
+        child : "chevreau",
+        sound : {
+            noun : "bêlement",
+            verb : "bêle"
+        }
     }
 ];
 
 const getChild = function(animal){
     if(animal.child != null){
-        return "Le petit du "+animal.name+" s'appelle le "+animal.child;
+        return "<speak>Le petit du "+animal.name+" s'appelle le "+animal.child+"</speak>";
     }
     else{
-        return "Il n'existe pas de nom en français pour désigner le petit du "+animal.name;
+        return "<speak>Il n'existe pas de nom en français pour désigner le petit du "+animal.name+"</speak>";
     }
 };
 
 const getFemale = function(animal){
     if(animal.female != null){
-        return "La femelle du "+animal.name+" s'appelle la "+animal.female;
+        return "<speak>La femelle du "+animal.name+" s'appelle la "+animal.female+"</speak>";
     }
     else{
-        return "Il n'existe pas de nom en français pour désigner la femelle du "+animal.name;
+        return "<speak>Il n'existe pas de nom en français pour désigner la femelle du "+animal.name+"</speak>";
     }
 };
+
+const getSound = function(animal){
+    if(animal.sound != null){
+        return "<speak>Le cri du "+animal.name+" est le "+animal.sound.noun+". On dit "
+        +"que le "+animal.name+" "+animal.sound.verb+". Écoutons ce que ça donne : "+
+        "<audio src=\"https://misteranimals-6d663.firebaseapp.com/sounds/"+animal.name+".wav\">"+animal.sound.noun+"</audio></speak>";
+    }
+    else{
+        return "<speak>Il n'existe pas de nom en français pour désigner le cri du "+animal.name+"</speak>";
+    }
+}
 
 const actions = [
     {
@@ -93,6 +144,12 @@ const actions = [
             "femme", "femelle"
         ],
         action : getFemale
+    },
+    {
+        name : [
+            "cri", "bruit", "son"
+        ],
+        action : getSound
     }
 ];
 
@@ -100,7 +157,7 @@ exports.animals = functions.https.onRequest((req, res) => {
     const app = new ActionsSdkApp({request: req, response: res});
 
     const mainIntent = function(app){
-        app.ask("Très bien, de quel animal souhaitez vous avoir plus d'informations ?");
+        app.ask("<speak>Très bien<break time=\"1s\" />, de quel animal souhaitez vous avoir plus d'informations ?</speak>");
     }
 
     const textIntent = function(app){
@@ -117,11 +174,11 @@ exports.animals = functions.https.onRequest((req, res) => {
         animals.forEach(function(animal){
             if(app.getRawInput().indexOf(animal.name) !== -1){
                 firebase.database().ref("conversations-data/"+app.getConversationId()+"/").set(animal);
-                app.ask("Très bien, souhaitez vous connaître le nom de la femelle, ou bien le nom du petit du "+animal.name+" ?");
+                app.ask("<speak>Très bien<break time=\"1s\" />, souhaitez vous connaître le nom de la femelle, le cri, ou bien le nom du petit du "+animal.name+" ?</speak>");
                 return;
             }
         });
-        app.tell("Désolé, je n'ai pas compris votre demande. Peut-être que je ne connais pas encore cet animal.");
+        app.tell("<speak>Désolé, je n'ai pas compris votre demande. Peut-être que je ne connais pas encore cet animal.</speak>");
     }
 
     const respondToInformation = function(app, animal){
@@ -134,7 +191,7 @@ exports.animals = functions.https.onRequest((req, res) => {
                 }
             });
         });
-        app.tell("Désolé, je n'ai pas compris votre demande. Peut-être que je ne connais pas cette information.");
+        app.tell("<speak>Désolé, je n'ai pas compris votre demande. Peut-être que je ne connais pas cette information.</speak>");
     }
 
     let actionMap = new Map();
