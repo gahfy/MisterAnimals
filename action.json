@@ -1,0 +1,23 @@
+{
+	"actions": [
+      {
+        "description": "Bienvenue",
+        "name": "MAIN",
+		"fulfillment": { "conversationName": "animals" },
+        "intent": {
+          "name": "actions.intent.MAIN",
+          "trigger": {
+            "queryPatterns": [
+              "parle avec Monsieur Animaux"
+            ]
+          }
+        }
+      }
+    ],
+    "conversations": {
+      "animals": {
+        "name": "animals",
+        "url": "https://us-central1-misteranimals-6d663.cloudfunctions.net/animals"
+      }
+    }
+}
