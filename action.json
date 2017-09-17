@@ -1,14 +1,14 @@
 {
 	"actions": [
       {
-        "description": "Bienvenue",
+        "description": "Welcome",
         "name": "MAIN",
 		"fulfillment": { "conversationName": "animals" },
         "intent": {
           "name": "actions.intent.MAIN",
           "trigger": {
             "queryPatterns": [
-              "parle avec Monsieur Animaux"
+			  "talk to Mr Animals"
             ]
           }
         }
@@ -17,7 +17,7 @@
     "conversations": {
       "animals": {
         "name": "animals",
-        "url": "https://us-central1-misteranimals-6d663.cloudfunctions.net/animals"
+        "url": "https://us-central1-misteranimals-6d663.cloudfunctions.net/animalsenglish"
       }
     }
 }

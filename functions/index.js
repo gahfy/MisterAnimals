@@ -199,3 +199,130 @@ exports.animals = functions.https.onRequest((req, res) => {
     actionMap.set(app.StandardIntents.TEXT, textIntent);
     app.handleRequest(actionMap);
 });
+
+/** English part */
+const animalsenglish = [
+    {
+        name : "hare",
+        male : "buck",
+        female : "doe",
+        child : "leveret",
+        sound : "squeak"
+    },
+    {
+        name : "deer",
+        male : "buck",
+        female : "doe",
+        child : "fawn",
+        sound : "bellow"
+    },
+    {
+        name : "duck",
+        male : "drake",
+        female : "duck",
+        child : "duckling",
+        sound : "quack"
+    },
+    {
+        name : "pig",
+        male : "boar",
+        female : "gilt",
+        child : "piglet",
+        sound : "grunt"
+    },
+    {
+        name : "horse",
+        male : "stallion",
+        female : "mare",
+        child : "foal",
+        sound : "neigh"
+    },
+    {
+        name : "wolf",
+        male : "dog",
+        female : "she-wolf",
+        child : "pup",
+        sound : "howl"
+    },
+    {
+        name : "rat",
+        male : "buck",
+        female : "doe",
+        child : "kitten",
+        sound : "squeak"
+    },
+    {
+        name : "monkey",
+        male : null,
+        female : null,
+        child : "infant",
+        sound : "scream"
+    },
+    {
+        name : "cow",
+        male : "bull",
+        female : "cow",
+        child : "calf",
+        sound : "moo"
+    },
+    {
+        name : "goat",
+        male : "buck",
+        female : "doe",
+        child : "kid",
+        sound : "bleat"
+    }
+];
+
+exports.animalsenglish = functions.https.onRequest((req, res) => {
+    const app = new ActionsSdkApp({request: req, response: res});
+
+    const mainIntent = function(app){
+        app.ask("<speak>Hey, I am mister animals.<break time=\"1s\" />Which animal would you like more information about?</speak>");
+    }
+
+    const textIntent = function(app){
+        respondToAnimal(app);
+    }
+
+    const respondToAnimal = function(app){
+        animalsenglish.forEach(function(animal){
+            if(app.getRawInput().indexOf(animal.name) !== -1){
+                let response = "";
+                if(animal.male != null){
+                    response += "The name of the male of the "+animal.name+" is "+animal.male+"<break time=\"1s\" /> ";
+                }
+                else{
+                    response += "There is no specific name for the male of the "+animal.name+"<break time=\"1s\" /> ";
+                }
+                if(animal.female != null){
+                    response += "The name of the female is "+animal.female+"<break time=\"1s\" /> ";
+                }
+                else{
+                    response += "There is no specific name for the female<break time=\"1s\" /> ";
+                }
+                if(animal.child != null){
+                    response += "The name of the young is "+animal.child+"<break time=\"1s\" /> ";
+                }
+                else{
+                    response += "There is no specific name for the young<break time=\"1s\" /> ";
+                }
+                if(animal.sound != null){
+                    response += "The name of the sound is "+animal.sound+"<break time=\"1s\" /> ";
+                }
+                else{
+                    response += "There is no specific name for the young<break time=\"1s\" /> ";
+                }
+                response += "Let's listen how it sounds like <audio src=\"https://misteranimals-6d663.firebaseapp.com/sounds/"+animal.name+".wav\">"+animal.sound+"</audio>";
+                app.tell("<speak>OK.<break time=\"1s\" /> "+response+"</speak>");
+                return;
+            }
+        });
+        app.tell("<speak>Sorry, it seems that I can't help you. I may not know this animal yet.</speak>");
+    }
+
+    let actionMap = new Map();
+    actionMap.set(app.StandardIntents.MAIN, mainIntent);
+    actionMap.set(app.StandardIntents.TEXT, textIntent);
+    app.handleRequest(actionMap);
+});
